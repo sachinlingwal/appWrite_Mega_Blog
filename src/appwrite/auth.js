@@ -1,15 +1,17 @@
-import { Account, ID } from "appwrite";
+import { Client, Account, ID } from "appwrite";
 import configEnv from "../config/ConfigEnv";
 
 export class AuthService {
   client = new Client();
   account;
+
   constructor() {
     this.client
-      .setEndpoint(configEnv.appWriteUrl)
+      .setEndpoint(import.meta.env.VITE_APPWRITE_URL)
       .setProject(configEnv.appWriteProjectId);
     this.account = new Account(this.client);
   }
+
   async createAccount({ email, password, name }) {
     try {
       const userAccount = await this.account.create(
@@ -19,6 +21,7 @@ export class AuthService {
         name
       );
       if (userAccount) {
+        // call another method
         return this.login({ email, password });
       } else {
         return userAccount;
@@ -27,6 +30,7 @@ export class AuthService {
       throw error;
     }
   }
+
   async login({ email, password }) {
     try {
       return await this.account.createEmailSession(email, password);
@@ -39,16 +43,17 @@ export class AuthService {
     try {
       return await this.account.get();
     } catch (error) {
-      console.log(error);
+      console.log("Appwrite serive :: getCurrentUser :: error", error);
     }
+
     return null;
   }
 
   async logout() {
     try {
-      await this.account.deleteSession();
+      await this.account.deleteSessions();
     } catch (error) {
-      console.log(error);
+      console.log("Appwrite serive :: logout :: error", error);
     }
   }
 }
