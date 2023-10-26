@@ -1,7 +1,7 @@
 import { Client, Databases } from "appwrite";
 import configEnv from "../config/ConfigEnv";
 
-export class Service {
+class Service {
   client = new Client();
   databases;
   bucket;
